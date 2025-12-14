@@ -96,7 +96,8 @@ if ($verifiedMods.Count -gt 0) {
 if ($unknownMods.Count -gt 0) {
 	Write-Host "{ Unknown Mods }" -ForegroundColor DarkCyan
 	foreach ($mod in $unknownMods) {
-		Write-Host "> $($mod.FileName)" -ForegroundColor DarkYellow
+		Write-Host "> $($mod.FileName)" -ForegroundColor Red
 	}
 	Write-Host
 }
+
