@@ -41,18 +41,6 @@ function Get-SHA1 {
     return (Get-FileHash -Path $filePath -Algorithm SHA1).Hash
 }
 
-function Get-ZoneIdentifier {
-    param (
-        [string]$filePath
-    )
-	$ads = Get-Content -Raw -Stream Zone.Identifier $filePath -ErrorAction SilentlyContinue
-	if ($ads -match "HostUrl=(.+)") {
-		return $matches[1]
-	}
-	
-	return $null
-}
-
 function Fetch-Modrinth {
     param (
         [string]$hash
@@ -91,8 +79,7 @@ foreach ($file in $jarFiles) {
 		continue;
     }
 	
-	$zoneId = Get-ZoneIdentifier $file.FullName
-	$unknownMods += [PSCustomObject]@{ FileName = $file.Name; FilePath = $file.FullName; ZoneId = $zoneId }
+	$unknownMods += [PSCustomObject]@{ FileName = $file.Name; FilePath = $file.FullName }
 }
 
 Write-Host "`r$(' ' * 80)`r" -NoNewline
@@ -109,11 +96,6 @@ if ($verifiedMods.Count -gt 0) {
 if ($unknownMods.Count -gt 0) {
 	Write-Host "{ Unknown Mods }" -ForegroundColor DarkCyan
 	foreach ($mod in $unknownMods) {
-		if ($mod.ZoneId) {
-			Write-Host ("> {0, -30}" -f $mod.FileName) -ForegroundColor DarkYellow -NoNewline
-			Write-Host "$($mod.ZoneId)" -ForegroundColor DarkGray
-			continue
-		}
 		Write-Host "> $($mod.FileName)" -ForegroundColor DarkYellow
 	}
 	Write-Host
